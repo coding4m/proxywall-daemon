@@ -11,4 +11,5 @@ ENV PROXYWALL_TEMPLATE_SRC /etc/nginx/nginx.tmpl
 ENV PROXYWALL_TEMPLATE_DEST /etc/nginx/conf.d/default.conf
 ENV PROXYWALL_POST_CMD "/etc/init.d/nginx restart"
 
+EXPOSE 80 443
 ENTRYPOINT ["/usr/local/bin/proxywall-daemon"]
