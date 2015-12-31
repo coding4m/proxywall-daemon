@@ -37,7 +37,7 @@
 {% endfor %}
 # This is just an invalid value which will never trigger on a real hostname.
 server {
+    listen 80 default_server;
     server_name _;
-    listen 80;
     return 503;
 }
