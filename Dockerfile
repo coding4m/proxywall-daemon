@@ -11,5 +11,4 @@ ENV PROXYWALL_TEMPLATE_SRC /etc/nginx/nginx.tmpl
 ENV PROXYWALL_TEMPLATE_DEST /etc/nginx/conf.d/default.conf
 ENV PROXYWALL_POST_CMD "/etc/init.d/nginx restart"
 
-RUN /etc/init.d/nginx start
 ENTRYPOINT ["/usr/local/bin/proxywall-daemon"]
