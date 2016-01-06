@@ -11,7 +11,6 @@
     {% for proxy_group in proxy_detail.nodes|groupby('proto') %}
     {% if proxy_group.grouper == 'http' %}
     server {
-        access_log /dev/stdout main;
         server_name {{ proxy_detail.name }};
         listen 80;
         location / {
@@ -23,7 +22,6 @@
     }
     {% else %}
     server {
-        access_log /dev/stdout main;
         server_name {{ proxy_detail.name }};
         listen 443;
         ssl on;
@@ -39,7 +37,6 @@
 {% endfor %}
 # This is just an invalid value which will never trigger on a real hostname.
 server {
-    access_log /dev/stdout main;
     listen 80 default_server;
     server_name _;
     return 503;
