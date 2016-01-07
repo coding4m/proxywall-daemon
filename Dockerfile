@@ -14,7 +14,7 @@ ENV PROXYWALL_TEMPLATE_DEST /etc/nginx/conf.d/default.conf
 ENV PROXYWALL_POST_CMD "nginx -s reload"
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates nginx=$NGINX_VERSION && \
+    apt-get install -y --no-install-recommends wget ca-certificates nginx=$NGINX_VERSION && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget -P /usr/bin https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego
