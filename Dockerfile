@@ -19,14 +19,17 @@ RUN apt-get update && \
 
 RUN wget -P /usr/bin https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego
 RUN chmod u+x /usr/bin/forego
+
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 ADD ./nginx.conf /etc/nginx/nginx.conf
 ADD ./nginx.tmpl /etc/nginx/nginx.tmpl
-ADD Procfile /app/
+ADD ./Procfile /app/
+ADD ./app.sh /app/
+RUN chmod +x /app/app.sh
 WORKDIR /app/
 
 EXPOSE 80 443
 VOLUME ["$NGINX_ENABLED_SITES", "$NGINX_ENABLED_CERTS", "$NGINX_ENABLED_PASSWDS"]
-CMD ["forego", "start", "-r"]
+CMD ["/bin/bash", "/app/app.sh"]
