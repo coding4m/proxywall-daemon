@@ -65,8 +65,8 @@
         ssl_session_timeout 5m;
         ssl_session_cache shared:SSL:50m;
 
-        ssl_certificate {{ ssl_crt }};
-        ssl_certificate_key {{ ssl_key }};
+        ssl_certificate {{ ssl_default_crt }};
+        ssl_certificate_key {{ ssl_default_key }};
 
         {% if proxy_conf|exists %}
             include {{ proxy_conf }};
@@ -94,7 +94,7 @@ server {
     server_name _;
     return 503;
     ssl_certificate {{ ssl_default_crt }};
-    ssl_certificate_key {{ ssssl_default_key }};
+    ssl_certificate_key {{ ssl_default_key }};
 }
 {% endif %}
 
