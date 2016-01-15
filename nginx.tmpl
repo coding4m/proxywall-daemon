@@ -9,10 +9,16 @@
 {% for proxy_detail in proxy_details %}
     {{ upstream(proxy_detail.name, proxy_detail.nodes) }}
     {% for proxy_group in proxy_detail.nodes|groupby('proto') %}
+    {% set proxy_conf = '/etc/nginx/enabled-sites/%s'|format(proxy_detail.name) %}
+    {% set ssl_crt = '/etc/nginx/enabled-certs/%s.crt'|format(proxy_detail.name) %}
+    {% set ssl_key = '/etc/nginx/enabled-certs/%s.key'|format(proxy_detail.name) %}
     {% if proxy_group.grouper == 'http' %}
     server {
         server_name {{ proxy_detail.name }};
         listen 80;
+        {% if proxy_conf|exists %}
+        include {{ proxy_conf }};
+        {% endif %}
         location / {
             proxy_pass http://{{ proxy_detail.name }};
             proxy_set_header Host $host;
@@ -20,11 +26,24 @@
             proxy_set_header X-Forward-For $remote_addr;
         }
     }
-    {% else %}
+    {% elif (ssl_crt|exists) and (ssl_key|exists) %}
     server {
         server_name {{ proxy_detail.name }};
-        listen 443;
-        ssl on;
+        listen 443 ssl;
+
+        ssl_protocols SSLv2 SSLv3 TLSv1;
+        ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+        ssl_prefer_server_ciphers on;
+
+        ssl_session_timeout 5m;
+        ssl_session_cache shared:SSL:50m;
+
+        ssl_certificate {{ ssl_crt }};
+        ssl_certificate_key {{ ssl_key }};
+
+        {% if proxy_conf|exists %}
+        include {{ proxy_conf }};
+        {% endif %}
         location / {
             proxy_pass http://{{ proxy_detail.name }};
             proxy_set_header Host $host;
@@ -41,4 +60,18 @@ server {
     server_name _;
     return 503;
 }
+
+{% set ssl_default_crt = '/etc/nginx/enabled-certs/default.crt' %}
+{% set ssl_default_key = '/etc/nginx/enabled-certs/default.key' %}
+{% if (ssl_default_crt|exists) and (ssl_default_key|exists) %}
+server {
+    listen 443 ssl default_server;
+    server_name _;
+    return 503;
+    ssl_certificate {{ ssl_default_crt }};
+    ssl_certificate_key {{ ssssl_default_key }};
+}
+{% endif %}
+
+
 
