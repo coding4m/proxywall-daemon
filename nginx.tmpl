@@ -26,6 +26,7 @@
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forward-For $remote_addr;
+            proxy_set_header X-Forwarded-Proto $scheme;
         }
     }
     {% elif (ssl_crt|exists) and (ssl_key|exists) %}
@@ -51,6 +52,7 @@
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forward-For $remote_addr;
+            proxy_set_header X-Forwarded-Proto $scheme;
         }
     }
     {% elif  (ssl_default_crt|exists) and (ssl_default_key|exists) %}
@@ -76,6 +78,7 @@
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forward-For $remote_addr;
+            proxy_set_header X-Forwarded-Proto $scheme;
         }
     }
     {% endif %}
