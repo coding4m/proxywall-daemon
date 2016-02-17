@@ -1,0 +1,59 @@
+.bg-wrapper {
+	position: relative;
+}
+.error-page-bg {
+	display: block;
+	width: 30%;
+	max-width: 420px;
+	margin: 5% auto auto auto;
+}
+.error-code {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -35px;
+    font-size: 20px;
+    font-family: arial;
+}
+.hint-text {
+	text-align: center;
+}
+.main-text {
+	margin-bottom: 13px;
+	color: #46484A;
+	font-weight: bold;
+	font-size: 22px;
+}
+.detail-text {
+	margin-bottom: 8px;
+	color: #ADAAAA;
+	font-size: 14px;
+}
+.detail-text:nth-child(4) {
+	margin-top: 8px;
+}
+.refresh-text {
+	margin-top: 8px;
+	color: #46484A;
+	font-size: 12px;
+}
+.refresh-icon {
+	display: block;
+	width: 40px;
+	height: 40px;
+	margin: 30px auto auto auto;
+	background-image: url('images/refresh@2x.png');
+	background-size: 100%;
+	cursor: pointer;
+}
+@media screen and (min-width: 1700px) {
+	.main-text {
+		font-size: 24px;
+	}
+	.detail-text {
+		font-size: 16px;
+	}
+	.refresh-text {
+		font-size: 14px;
+	}
+}
