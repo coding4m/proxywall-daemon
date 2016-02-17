@@ -27,7 +27,7 @@ ADD ./nginx.conf /etc/nginx/nginx.conf
 ADD ./nginx.errors.conf /etc/nginx/nginx.errors.conf
 ADD ./nginx.tmpl /etc/nginx/nginx.tmpl
 
-ADD ./error_pages /app/error_pages
+ADD ./html /app/html
 ADD ./Procfile /app/
 ADD ./app.sh /app/
 RUN chmod +x /app/app.sh
