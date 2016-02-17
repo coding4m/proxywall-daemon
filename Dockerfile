@@ -26,7 +26,7 @@ RUN ln -sf /dev/stderr /var/log/nginx/error.log
 ADD ./nginx.conf /etc/nginx/nginx.conf
 ADD ./nginx.tmpl /etc/nginx/nginx.tmpl
 
-ADD ./error_pages /app/
+ADD ./error_pages /app/error_pages
 ADD ./Procfile /app/
 ADD ./app.sh /app/
 RUN chmod +x /app/app.sh
