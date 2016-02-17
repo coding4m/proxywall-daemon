@@ -89,6 +89,10 @@ server {
     listen 80 default_server;
     server_name _;
     return 503;
+
+    root /app/;
+    error_page 400 401 403 404 /error_pages/40x.html;
+    error_page 500 501 502 503 504 /error_pages/50x.html;
 }
 
 {% if (ssl_default_crt|exists) and (ssl_default_key|exists) %}
@@ -98,6 +102,10 @@ server {
     return 503;
     ssl_certificate {{ ssl_default_crt }};
     ssl_certificate_key {{ ssl_default_key }};
+
+    root /app/;
+    error_page 400 401 403 404 /error_pages/40x.html;
+    error_page 500 501 502 503 504 /error_pages/50x.html;
 }
 {% endif %}
 
