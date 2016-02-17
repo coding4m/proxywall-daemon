@@ -89,7 +89,7 @@ server {
     listen 80 default_server;
     server_name _;
 
-    include /etc/nginx/nginx-errors.conf;
+    include /etc/nginx/nginx.errors.conf;
 
     location / {
         return 503;
@@ -103,7 +103,7 @@ server {
     ssl_certificate {{ ssl_default_crt }};
     ssl_certificate_key {{ ssl_default_key }};
 
-    include /etc/nginx/nginx-errors.conf;
+    include /etc/nginx/nginx.errors.conf;
 
     location / {
         return 503;
