@@ -24,6 +24,7 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 ADD ./nginx.conf /etc/nginx/nginx.conf
+ADD ./nginx-errors.conf /etc/nginx/nginx-errors.conf
 ADD ./nginx.tmpl /etc/nginx/nginx.tmpl
 
 ADD ./error_pages /app/error_pages
