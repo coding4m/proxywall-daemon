@@ -11,7 +11,7 @@
 {% for proxy_detail in proxy_details %}
     {{ upstream(proxy_detail.name, proxy_detail.nodes) }}
     {% for proxy_group in proxy_detail.nodes|groupby('proto') %}
-    {% set proxy_conf = '/etc/nginx/enabled-sites/%s'|format(proxy_detail.name) %}
+    {% set proxy_conf = '/etc/nginx/enabled-sites/%s.conf'|format(proxy_detail.name) %}
     {% set ssl_crt = '/etc/nginx/enabled-certs/%s.crt'|format(proxy_detail.name) %}
     {% set ssl_key = '/etc/nginx/enabled-certs/%s.key'|format(proxy_detail.name) %}
     {% if proxy_group.grouper == 'http' %}
