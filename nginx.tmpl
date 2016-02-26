@@ -1,121 +1,117 @@
 {% macro upstream(name, nodes) -%}
-    upstream {{ name }} {
-    {% for node in nodes %}
-        server {{ node.addr }}:{{ node.port }} weight={{ node.weight }};
-    {% endfor %}
-    }
+upstream {{ name }} {
+{% for node in nodes %}
+    server {{ node.addr }}:{{ node.port }} weight={{ node.weight }};
+{% endfor %}
+}
 {%- endmacro %}
 
 {% set ssl_default_crt = '/etc/nginx/enabled-certs/default.crt' %}
 {% set ssl_default_key = '/etc/nginx/enabled-certs/default.key' %}
 {% for proxy_detail in proxy_details %}
-    {% set proxy_conf = '/etc/nginx/enabled-sites/%s.conf'|format(proxy_detail.name) %}
-    {% set ssl_crt = '/etc/nginx/enabled-certs/%s.crt'|format(proxy_detail.name) %}
-    {% set ssl_key = '/etc/nginx/enabled-certs/%s.key'|format(proxy_detail.name) %}
+{% set proxy_conf = '/etc/nginx/enabled-sites/%s.conf'|format(proxy_detail.name) %}
+{% set ssl_crt = '/etc/nginx/enabled-certs/%s.crt'|format(proxy_detail.name) %}
+{% set ssl_key = '/etc/nginx/enabled-certs/%s.key'|format(proxy_detail.name) %}
 
-    {% for proxy_group in proxy_detail.nodes|groupby('proto') %}
-        {% if proxy_group.grouper == 'http' %}
-            {{ upstream('http.%s'|format(proxy_detail.name), proxy_group.list) }}
-            server {
-            server_name {{ proxy_detail.name }};
-            listen 80;
-            {% if proxy_conf|exists %}
-                include {{ proxy_conf }};
-            {% endif %}
-            location / {
-            proxy_pass http://{{ 'http.%s'|format(proxy_detail.name) }};
+{% for proxy_group in proxy_detail.nodes|groupby('proto') %}
+{% if proxy_group.grouper == 'http' %}
+{{ upstream('http.%s'|format(proxy_detail.name), proxy_group.list) }}
+server {
+    server_name {{ proxy_detail.name }};
+    listen 80;
+    {% if proxy_conf|exists %}
+    include {{ proxy_conf }};
+    {% endif %}
+    location / {
+        proxy_pass http://{{ 'http.%s'|format(proxy_detail.name) }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forward-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
 
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forward-For $remote_addr;
-            proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+    }
+}
+{% elif proxy_group.grouper == 'https' and (ssl_crt|exists) and (ssl_key|exists) %}
+{{ upstream('https.%s'|format(proxy_detail.name), proxy_group.list) }}
+server {
+    server_name {{ proxy_detail.name }};
+    listen 443 ssl;
 
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
-            }
-            }
-        {% elif proxy_group.grouper == 'https' and (ssl_crt|exists) and (ssl_key|exists) %}
-            {{ upstream('https.%s'|format(proxy_detail.name), proxy_group.list) }}
-            server {
-            server_name {{ proxy_detail.name }};
-            listen 443 ssl;
+    ssl_protocols SSLv2 SSLv3 TLSv1;
+    ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+    ssl_prefer_server_ciphers on;
 
-            ssl_protocols SSLv2 SSLv3 TLSv1;
-            ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
-            ssl_prefer_server_ciphers on;
+    ssl_session_timeout 5m;
+    ssl_session_cache shared:SSL:50m;
 
-            ssl_session_timeout 5m;
-            ssl_session_cache shared:SSL:50m;
+    ssl_certificate {{ ssl_crt }};
+    ssl_certificate_key {{ ssl_key }};
 
-            ssl_certificate {{ ssl_crt }};
-            ssl_certificate_key {{ ssl_key }};
+    {% if proxy_conf|exists %}
+    include {{ proxy_conf }};
+    {% endif %}
+    location / {
+        proxy_pass http://{{ 'https.%s'|format(proxy_detail.name) }};
 
-            {% if proxy_conf|exists %}
-                include {{ proxy_conf }};
-            {% endif %}
-            location / {
-            proxy_pass http://{{ 'https.%s'|format(proxy_detail.name) }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forward-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
 
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forward-For $remote_addr;
-            proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+    }
+}
+{% elif  proxy_group.grouper == 'https' and (ssl_default_crt|exists) and (ssl_default_key|exists) %}
+{{ upstream('https.%s'|format(proxy_detail.name), proxy_group.list) }}
+server {
+    server_name {{ proxy_detail.name }};
+    listen 443 ssl;
 
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
-            }
-            }
-        {% elif  proxy_group.grouper == 'https' and (ssl_default_crt|exists) and (ssl_default_key|exists) %}
-            {{ upstream('https.%s'|format(proxy_detail.name), proxy_group.list) }}
-            server {
-            server_name {{ proxy_detail.name }};
-            listen 443 ssl;
+    ssl_protocols SSLv2 SSLv3 TLSv1;
+    ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+    ssl_prefer_server_ciphers on;
 
-            ssl_protocols SSLv2 SSLv3 TLSv1;
-            ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
-            ssl_prefer_server_ciphers on;
+    ssl_session_timeout 5m;
+    ssl_session_cache shared:SSL:50m;
 
-            ssl_session_timeout 5m;
-            ssl_session_cache shared:SSL:50m;
+    ssl_certificate {{ ssl_default_crt }};
+    ssl_certificate_key {{ ssl_default_key }};
 
-            ssl_certificate {{ ssl_default_crt }};
-            ssl_certificate_key {{ ssl_default_key }};
+    {% if proxy_conf|exists %}
+    include {{ proxy_conf }};
+    {% endif %}
+    location / {
+        proxy_pass http://{{ 'https.%s'|format(proxy_detail.name) }};
 
-            {% if proxy_conf|exists %}
-                include {{ proxy_conf }};
-            {% endif %}
-            location / {
-            proxy_pass http://{{ 'https.%s'|format(proxy_detail.name) }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forward-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
 
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forward-For $remote_addr;
-            proxy_set_header X-Forwarded-Proto $scheme;
-
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
-            }
-            }
-        {% endif %}
-    {% endfor %}
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+    }
+}
+{% endif %}
+{% endfor %}
 {% endfor %}
 # This is just an invalid value which will never trigger on a real hostname.
 server {
-listen 80 default_server;
-server_name _;
+    listen 80 default_server;
+    server_name _;
 
-include /etc/nginx/nginx.errors.conf;
+    include /etc/nginx/nginx.errors.conf;
 
-location / {
-return 503;
-}
+    location / {
+        return 503;
+    }
 }
 
 {% if (ssl_default_crt|exists) and (ssl_default_key|exists) %}
-    server {
+server {
     listen 443 ssl default_server;
     server_name _;
     ssl_certificate {{ ssl_default_crt }};
@@ -124,9 +120,9 @@ return 503;
     include /etc/nginx/nginx.errors.conf;
 
     location / {
-    return 503;
+        return 503;
     }
-    }
+}
 {% endif %}
 
 
