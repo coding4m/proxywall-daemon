@@ -9,12 +9,12 @@ upstream {{ name }} {
 {% set ssl_default_crt = '/etc/nginx/enabled-certs/default.crt' %}
 {% set ssl_default_key = '/etc/nginx/enabled-certs/default.key' %}
 {% for proxy_detail in proxy_details %}
-{% set proxy_conf = '/etc/nginx/enabled-sites/%s.conf'|format(proxy_detail.name) %}
 {% set ssl_crt = '/etc/nginx/enabled-certs/%s.crt'|format(proxy_detail.name) %}
 {% set ssl_key = '/etc/nginx/enabled-certs/%s.key'|format(proxy_detail.name) %}
 
 {% for proxy_group in proxy_detail.nodes|groupby('proto') %}
 {% if proxy_group.grouper == 'http' %}
+{% set proxy_conf = '/etc/nginx/enabled-sites/http.%s.conf'|format(proxy_detail.name) %}
 {{ upstream('http.%s'|format(proxy_detail.name), proxy_group.list) }}
 server {
     server_name {{ proxy_detail.name }};
@@ -33,6 +33,7 @@ server {
     }
 }
 {% elif proxy_group.grouper == 'https' and (ssl_crt|exists) and (ssl_key|exists) %}
+{% set proxy_conf = '/etc/nginx/enabled-sites/https.%s.conf'|format(proxy_detail.name) %}
 {{ upstream('https.%s'|format(proxy_detail.name), proxy_group.list) }}
 server {
     server_name {{ proxy_detail.name }};
@@ -63,6 +64,7 @@ server {
     }
 }
 {% elif  proxy_group.grouper == 'https' and (ssl_default_crt|exists) and (ssl_default_key|exists) %}
+{% set proxy_conf = '/etc/nginx/enabled-sites/https.%s.conf'|format(proxy_detail.name) %}
 {{ upstream('https.%s'|format(proxy_detail.name), proxy_group.list) }}
 server {
     server_name {{ proxy_detail.name }};
