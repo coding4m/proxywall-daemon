@@ -2,7 +2,7 @@ FROM coding4m/proxywall
 MAINTAINER coding4m@gmail.com
 
 RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
-RUN echo "deb http://nginx.org/packages/mainline/debian/ jessie nginx" >> /etc/apt/sources.list
+RUN echo "deb http://nginx.org/packages/debian/ jessie nginx" >> /etc/apt/sources.list
 
 ENV NGINX_VERSION 1.10.1-1~jessie
 ENV NGINX_ENABLED_SITES /etc/nginx/enabled-sites
@@ -14,7 +14,7 @@ ENV PROXYWALL_TEMPLATE_DEST /etc/nginx/conf.d/default.conf
 ENV PROXYWALL_POST_CMD "nginx -s reload"
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libssl1.0.0 wget ca-certificates nginx=$NGINX_VERSION && \
+    apt-get install -y --no-install-recommends wget ca-certificates nginx=$NGINX_VERSION && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget -P /usr/bin https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego
