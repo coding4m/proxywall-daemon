@@ -17,7 +17,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends wget ca-certificates nginx=$NGINX_VERSION && \
     rm -rf /var/lib/apt/lists/*
 
-RUN wget -P /usr/bin https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego
+RUN wget -P /tmp https://bin.equinox.io/c/ekMN3bCZFUn/forego-stable-darwin-amd64.zip
+#RUN wget -P /usr/bin https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego
+RUN unzip /tmp/forego-stable-darwin-amd64.zip -d /usr/bin
 RUN chmod u+x /usr/bin/forego
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
