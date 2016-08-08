@@ -14,12 +14,12 @@ ENV PROXYWALL_TEMPLATE_DEST /etc/nginx/conf.d/default.conf
 ENV PROXYWALL_POST_CMD "nginx -s reload"
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget unzip ca-certificates nginx=$NGINX_VERSION && \
+    apt-get install -y --no-install-recommends wget tar ca-certificates nginx=$NGINX_VERSION && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget -P /tmp https://bin.equinox.io/c/ekMN3bCZFUn/forego-stable-linux-amd64.tgz
 #RUN wget -P /usr/bin https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego
-RUN unzip /tmp/forego-stable-linux-amd64.tgz -d /usr/bin
+RUN tar zxf /tmp/forego-stable-linux-amd64.tgz -C /usr/bin && rm -f /tmp/forego-stable-linux-amd64.tgz
 RUN chmod u+x /usr/bin/forego
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
