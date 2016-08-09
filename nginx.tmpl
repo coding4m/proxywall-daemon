@@ -26,6 +26,7 @@ server {
         proxy_pass http://{{ 'http.%s'|format(proxy_detail.name) }};
 
         proxy_set_header Host $host;
+        proxy_set_header X-Scheme $scheme;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forward-For $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
@@ -60,12 +61,15 @@ server {
         proxy_pass http://{{ 'https.%s'|format(proxy_detail.name) }};
 
         proxy_set_header Host $host;
+        proxy_set_header X-Scheme $scheme;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forward-For $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
 
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
+
+        proxy_redirect ~^http://.+$ $scheme://$host$request_uri;
     }
 }
 {% elif  proxy_group.grouper == 'https' and (ssl_default_crt|exists) and (ssl_default_key|exists) %}
@@ -94,12 +98,15 @@ server {
         proxy_pass http://{{ 'https.%s'|format(proxy_detail.name) }};
 
         proxy_set_header Host $host;
+        proxy_set_header X-Scheme $scheme;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forward-For $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
 
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
+
+        proxy_redirect ~^http://.+$ $scheme://$host$request_uri;
     }
 }
 {% endif %}
