@@ -25,7 +25,7 @@ server {
     location / {
         proxy_pass http://{{ 'http.%s'|format(proxy_detail.name) }};
 
-        proxy_set_header Host $host
+        proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forward-For $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
@@ -59,7 +59,7 @@ server {
     location / {
         proxy_pass http://{{ 'https.%s'|format(proxy_detail.name) }};
 
-        proxy_set_header Host $host
+        proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forward-For $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
@@ -93,7 +93,7 @@ server {
     location / {
         proxy_pass http://{{ 'https.%s'|format(proxy_detail.name) }};
 
-        proxy_set_header Host $host
+        proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forward-For $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
