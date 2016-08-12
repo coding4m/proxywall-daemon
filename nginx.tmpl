@@ -36,10 +36,11 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
 
-        {% if proxy_detail.redirect %}
-        {% set proxy_redirect = proxy_detail.redirect.split('=') %}
-        {% if length(proxy_redirect) == 2 %}
-        proxy_redirect {{proxy_redirect[0]|replace("@", "$")}} {{proxy_redirect[1]|replace("@", "$")}};
+        {% set proxy_redirect = proxy_group.list|first %}
+        {% if proxy_redirect.redirect %}
+        {% set proxy_redirect_params = proxy_redirect.redirect.split('=') %}
+        {% if proxy_redirect_params|length == 2 %}
+        proxy_redirect {{proxy_redirect_params[0]|replace("@", "$")}} {{proxy_redirect_params[1]|replace("@", "$")}};
         {% endif %}
         {% endif %}
     }
@@ -80,10 +81,11 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
 
-        {% if proxy_detail.redirect %}
-        {% set proxy_redirect = proxy_detail.redirect.split('=') %}
-        {% if length(proxy_redirect) == 2 %}
-        proxy_redirect {{proxy_redirect[0]|replace("@", "$")}} {{proxy_redirect[1]|replace("@", "$")}};
+        {% set proxy_redirect = proxy_group.list|first %}
+        {% if proxy_redirect.redirect %}
+        {% set proxy_redirect_params = proxy_redirect.redirect.split('=') %}
+        {% if proxy_redirect_params|length == 2 %}
+        proxy_redirect {{proxy_redirect_params[0]|replace("@", "$")}} {{proxy_redirect_params[1]|replace("@", "$")}};
         {% endif %}
         {% endif %}
         proxy_redirect http://$host $scheme://$host;
@@ -124,10 +126,11 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
 
-        {% if proxy_detail.redirect %}
-        {% set proxy_redirect = proxy_detail.redirect.split('=') %}
-        {% if length(proxy_redirect) == 2 %}
-        proxy_redirect {{proxy_redirect[0]|replace("@", "$")}} {{proxy_redirect[1]|replace("@", "$")}};
+        {% set proxy_redirect = proxy_group.list|first %}
+        {% if proxy_redirect.redirect %}
+        {% set proxy_redirect_params = proxy_redirect.redirect.split('=') %}
+        {% if proxy_redirect_params|length == 2 %}
+        proxy_redirect {{proxy_redirect_params[0]|replace("@", "$")}} {{proxy_redirect_params[1]|replace("@", "$")}};
         {% endif %}
         {% endif %}
         proxy_redirect http://$host $scheme://$host;
