@@ -35,6 +35,13 @@ server {
 
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
+
+        {% if proxy_detail.redirect %}
+        {% set proxy_redirect = proxy_detail.redirect.split('=') %}
+        {% if length(proxy_redirect) == 2 %}
+        proxy_redirect {{proxy_redirect[0]|replace("@", "$")}} {{proxy_redirect[1]|replace("@", "$")}};
+        {% endif %}
+        {% endif %}
     }
 }
 {% elif proxy_group.grouper == 'https' and (ssl_crt|exists) and (ssl_key|exists) %}
@@ -73,6 +80,12 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
 
+        {% if proxy_detail.redirect %}
+        {% set proxy_redirect = proxy_detail.redirect.split('=') %}
+        {% if length(proxy_redirect) == 2 %}
+        proxy_redirect {{proxy_redirect[0]|replace("@", "$")}} {{proxy_redirect[1]|replace("@", "$")}};
+        {% endif %}
+        {% endif %}
         proxy_redirect http://$host $scheme://$host;
     }
 }
@@ -111,6 +124,12 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
 
+        {% if proxy_detail.redirect %}
+        {% set proxy_redirect = proxy_detail.redirect.split('=') %}
+        {% if length(proxy_redirect) == 2 %}
+        proxy_redirect {{proxy_redirect[0]|replace("@", "$")}} {{proxy_redirect[1]|replace("@", "$")}};
+        {% endif %}
+        {% endif %}
         proxy_redirect http://$host $scheme://$host;
     }
 }
