@@ -19,6 +19,8 @@ upstream {{ name }} {
 server {
     server_name {{ proxy_detail.name }};
     listen 80;
+
+    include /etc/nginx/nginx.errors.conf;
     {% if proxy_conf|exists %}
     include {{ proxy_conf }};
     {% endif %}
@@ -53,6 +55,8 @@ server {
 
     ssl_stapling on;
     ssl_prefer_server_ciphers on;
+
+    include /etc/nginx/nginx.errors.conf;
 
     {% if proxy_conf|exists %}
     include {{ proxy_conf }};
@@ -91,6 +95,7 @@ server {
     ssl_stapling on;
     ssl_prefer_server_ciphers on;
 
+    include /etc/nginx/nginx.errors.conf;
     {% if proxy_conf|exists %}
     include {{ proxy_conf }};
     {% endif %}
