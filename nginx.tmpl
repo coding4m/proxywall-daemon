@@ -38,10 +38,13 @@ server {
 
         {% set proxy_redirect = proxy_group.list|first %}
         {% if proxy_redirect.redirect %}
-        {% set proxy_redirect_params = proxy_redirect.redirect.split('=') %}
+        {% set proxy_redirect_directives = proxy_redirect.redirect.split(';') %}
+        {% for proxy_redirect_directive in proxy_redirect_directives %}
+        {% set proxy_redirect_params = proxy_redirect_directive.split('=') %}
         {% if proxy_redirect_params|length == 2 %}
         proxy_redirect {{proxy_redirect_params[0]|replace("@", "$")}} {{proxy_redirect_params[1]|replace("@", "$")}};
         {% endif %}
+        {% endfor %}
         {% endif %}
     }
 }
