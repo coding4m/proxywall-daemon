@@ -18,7 +18,7 @@ upstream {{ name }} {
 {{ upstream('http.%s'|format(proxy_detail.name), proxy_group.list) }}
 server {
     server_name {{ proxy_detail.name }};
-    listen 80;
+    listen {{ HTTP_PORT }};
 
     include /etc/nginx/nginx.errors.conf;
     {% if proxy_conf|exists %}
@@ -53,7 +53,7 @@ server {
 {{ upstream('https.%s'|format(proxy_detail.name), proxy_group.list) }}
 server {
     server_name {{ proxy_detail.name }};
-    listen 443 ssl;
+    listen {{ HTTPS_PORT }} ssl;
 
     ssl_certificate {{ ssl_crt }};
     ssl_certificate_key {{ ssl_key }};
@@ -102,7 +102,7 @@ server {
 {{ upstream('https.%s'|format(proxy_detail.name), proxy_group.list) }}
 server {
     server_name {{ proxy_detail.name }};
-    listen 443 ssl;
+    listen {{ HTTPS_PORT }} ssl;
 
     ssl_certificate {{ ssl_default_crt }};
     ssl_certificate_key {{ ssl_default_key }};
@@ -150,7 +150,7 @@ server {
 {% endfor %}
 # This is just an invalid value which will never trigger on a real hostname.
 server {
-    listen 80 default_server;
+    listen {{ HTTP_PORT }} default_server;
     server_name _;
 
     include /etc/nginx/nginx.errors.conf;
@@ -162,7 +162,7 @@ server {
 
 {% if (ssl_default_crt|exists) and (ssl_default_key|exists) %}
 server {
-    listen 443 ssl default_server;
+    listen {{ HTTPS_PORT }} ssl default_server;
     server_name _;
 
     ssl_certificate {{ ssl_default_crt }};

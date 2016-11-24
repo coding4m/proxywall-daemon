@@ -9,6 +9,8 @@ ENV NGINX_ENABLED_SITES /etc/nginx/enabled-sites
 ENV NGINX_ENABLED_CERTS /etc/nginx/enabled-certs
 ENV NGINX_ENABLED_PASSWDS /etc/nginx/enabled-passwds
 
+ENV PROXYWALL_HTTP_PORT 80
+ENV PROXYWALL_HTTPS_PORT 443
 ENV PROXYWALL_TEMPLATE_SRC /etc/nginx/nginx.tmpl
 ENV PROXYWALL_TEMPLATE_DEST /etc/nginx/conf.d/default.conf
 ENV PROXYWALL_POST_CMD "nginx -s reload"
